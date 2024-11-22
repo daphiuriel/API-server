@@ -1,0 +1,36 @@
+Home Assignment - Daphna Uriel
+
+Task 1 - Identifying and fixing problems with the API implementation:
+
+1. Problem: The password is stored as it is in the User struct, so if the user database were compromised,
+attackers would have access to the users' passwords.
+The "json.NewDecoder(r.Body).Decode(&user)" line automatically populated the user.Password field with the
+original password, without any encryption.
+
+Solution: Using proper hashing for storing passwords. This way we can ensure that even if a database is
+compromised, the actual passwords are not exposed, as hashed passwords cannot be easily reversed back to the
+original ones. Change was made in lines 34-41 (Register function).
+
+2. Problem: The JWT signing key (jwtKey) is hardcoded as a string in the source code.
+If an attacker gains access to the source code or binaries, they could easily forge valid tokens.
+
+Solution: Storing sensitive information like the JWT signing key in environment variables.
+Using .env files to store environment variables. Change was made in line 14 (in jwtKey declaration).
+
+3. Problem: The password is compared using a simple == operator, which may be vulnerable to timing attacks.
+The == operator compares each character one by one, potentially taking longer when characters are close to
+being correct, thus revealing information about the password through response time.
+
+Solution: Using bcrypt.CompareHashAndPassword() to securely compare the password with the hashed one.
+Change was made in lines 63-72 (Login function).
+
+4. Problem: Some functions do not check the user's permissions to ensure they are admins or acting on their
+own account.
+
+Solution: Add authorization checks in relevant functions to ensure users can only access their own data and
+admins can have more permissions. Changes were made in lines 107-112 (AccountsHandler function),
+149-154 (getBalance function), 175-181 (depositBalance function), 203-209 (withdrawBalance function)
+
+
+
+
